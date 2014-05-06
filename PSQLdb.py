@@ -1,7 +1,11 @@
-import psycopg2
 import itertools
 
 version = "0.1"
+
+try:
+    import psycopg2
+except ImportError,e:
+    print e
 
 class Connection:
     def __init__(self, host, database, user=None, password=None):
@@ -43,6 +47,9 @@ class Connection:
             cursor.close()
 
     def get(self, query, *parameters, **kwparameters):
+        """
+        Return one row result.
+        """
         rows = self.query(query, *parameters, **kwparameters)
 
         if not rows:
@@ -53,9 +60,15 @@ class Connection:
             return rows[0]
     
     def execute(self, query, *parameters, **kwparameters):
+        """
+        Execute query and return affected row counts.
+        """
         return self.execute_rowcount(query, *parameters, **kwparameters)
 
     def execute_lastrowid(self, query, *parameters, **kwparameters):
+        """
+        Execute query and return last row id.
+        """
         cursor = self._cursor()
         try:
             self._execute(cursor, query, parameters, kwparameters)
@@ -64,6 +77,9 @@ class Connection:
             cursor.close()
 
     def execute_rowcount(self, query, *parameters, **kwparameters):
+        """
+        Execute query and return afffected row counts.
+        """
         cursor = self._cursor()
         try:
             self._execute(cursor, query, parameters, kwparameters)
